@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+            name="description"
+            content="미국 달러와 한국 원화를 간편하게 계산하는 환율 계산기입니다."
+    >
+
+    <meta
+            name="keywords"
+            content="달러 환율, 원화 환율, 달러 계산기, 환율 계산기, USD KRW, 달러 원"
+    >
+
+    <meta property="og:title" content="미국 달러 ↔ 한국 원화 환율 계산기">
+    <meta property="og:description" content="미국 달러와 한국 원화를 간편하게 계산하세요.">
+    <meta property="og:type" content="website">
+
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="manifest" href="/manifest.webmanifest">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+            href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap"
+            rel="stylesheet"
+    >
+
+    <title>미국 달러 ↔ 한국 원화 환율 계산기</title>
+
+    <style>
+        :root {
+            --text: #111827;
+            --text-sub: #6b7280;
+            --text-light: #9ca3af;
+
+            --border: #e5e7eb;
+            --border-focus: #111827;
+
+            --background: #ffffff;
+            --background-sub: #f7f8fa;
+
+            --shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+            --radius: 24px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-width: 320px;
+            background: #ffffff;
+            color: var(--text);
+            font-family: "Noto Sans KR", sans-serif;
+            letter-spacing: -0.04em;
+        }
+
+        button,
+        input {
+            font: inherit;
+        }
+
+        button {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 520px;
+            margin: 0 auto;
+            padding: 32px 16px 50px;
+        }
+
+        /* Header */
+
+        .header {
+            margin: 20px 0 28px;
+            text-align: center;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 26px;
+            font-weight: 800;
+            line-height: 1.4;
+        }
+
+        .header p {
+            margin: 10px 0 0;
+            color: var(--text-sub);
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        /* Card */
+
+        .exchange-card {
+            padding: 24px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            background: var(--background);
+            box-shadow: var(--shadow);
+        }
+
+        /* Currency */
+
+        .currency-row {
+            margin-bottom: 18px;
+        }
+
+        .currency-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 9px;
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        .flag {
+            font-size: 24px;
+        }
+
+        .input-wrap {
+            position: relative;
+        }
+
+        .currency-input {
+            width: 100%;
+            height: 64px;
+            padding: 0 80px 0 18px;
+
+            border: 1px solid #d9dde4;
+            border-radius: 14px;
+
+            outline: none;
+
+            background: #ffffff;
+            color: #111827;
+
+            font-size: 23px;
+            font-weight: 700;
+
+            transition:
+                    border-color 0.15s ease,
+                    box-shadow 0.15s ease;
+        }
+
+        .currency-input:focus {
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.06);
+        }
+
+        .currency-code {
+            position: absolute;
+            top: 50%;
+            right: 18px;
+
+            transform: translateY(-50%);
+
+            color: #777;
+            font-size: 14px;
+            font-weight: 800;
+
+            pointer-events: none;
+        }
+
+        /* Swap */
+
+        .swap-wrap {
+            display: flex;
+            justify-content: center;
+            margin: -3px 0 15px;
+        }
+
+        .swap-button {
+            display: flex;
+
+            width: 46px;
+            height: 46px;
+
+            align-items: center;
+            justify-content: center;
+
+            padding: 0;
+
+            border: 1px solid var(--border);
+            border-radius: 50%;
+
+            background: #ffffff;
+            color: #333;
+
+            font-size: 21px;
+
+            cursor: pointer;
+
+            transition:
+                    background 0.15s ease,
+                    transform 0.15s ease;
+        }
+
+        .swap-button:hover {
+            background: #f7f8fa;
+        }
+
+        .swap-button:active {
+            transform: scale(0.95);
+        }
+
+        /* Rate */
+
+        .rate-box {
+            margin-top: 22px;
+            padding: 18px;
+
+            border-radius: 16px;
+            background: var(--background-sub);
+        }
+
+        .rate-title {
+            margin-bottom: 8px;
+
+            color: #888;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .rate-main {
+            color: #222;
+            font-size: 19px;
+            font-weight: 800;
+        }
+
+        .rate-sub {
+            margin-top: 6px;
+
+            color: #666;
+            font-size: 14px;
+        }
+
+        .rate-date {
+            margin-top: 12px;
+
+            color: #999;
+            font-size: 12px;
+        }
+
+        /* Quick */
+
+        .quick-title {
+            margin: 28px 0 5px;
+
+            font-size: 17px;
+            font-weight: 800;
+        }
+
+        .quick-description {
+            margin: 0 0 13px;
+
+            color: #888;
+            font-size: 13px;
+        }
+
+        .quick-grid {
+            display: grid;
+
+            grid-template-columns: repeat(4, 1fr);
+
+            gap: 6px;
+        }
+
+        .quick-button {
+            min-height: 48px;
+
+            padding: 8px 3px;
+
+            border: 1px solid var(--border);
+            border-radius: 12px;
+
+            background: #ffffff;
+            color: #333;
+
+            font-size: 14px;
+            font-weight: 700;
+
+            cursor: pointer;
+
+            transition:
+                    background 0.15s ease,
+                    transform 0.15s ease;
+        }
+
+        .quick-button:hover {
+            background: #f7f8fa;
+        }
+
+        .quick-button:active {
+            transform: scale(0.97);
+            background: #f0f1f3;
+        }
+
+        /* Error */
+
+        .error {
+            margin-top: 20px;
+
+            padding: 18px;
+
+            border: 1px solid #fecaca;
+            border-radius: 16px;
+
+            background: #fef2f2;
+            color: #b91c1c;
+
+            font-size: 14px;
+            line-height: 1.7;
+
+            text-align: center;
+        }
+
+        /* Notice */
+
+        .notice {
+            margin-top: 22px;
+
+            color: var(--text-light);
+
+            font-size: 12px;
+            line-height: 1.8;
+
+            text-align: center;
+        }
+
+        .api-credit {
+            margin-top: 8px;
+        }
+
+        .api-credit a {
+            color: #777;
+            text-decoration: none;
+        }
+
+        .api-credit a:hover {
+            text-decoration: underline;
+        }
+
+        /* Mobile */
+
+        @media (max-width: 480px) {
+
+            .container {
+                padding-top: 20px;
+            }
+
+            .header {
+                margin-top: 12px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .exchange-card {
+                padding: 20px;
+            }
+
+        }
+
+        @media (max-width: 380px) {
+
+            .container {
+                padding-right: 12px;
+                padding-left: 12px;
+            }
+
+            .exchange-card {
+                padding: 16px;
+            }
+
+            .header h1 {
+                font-size: 22px;
+            }
+
+            .currency-input {
+                height: 60px;
+                font-size: 20px;
+            }
+
+            .quick-button {
+                font-size: 13px;
+            }
+
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <header class="header">
+
+        <h1>
+            🇺🇸 달러 ↔ 🇰🇷 원
+        </h1>
+
+        <p>
+            미국 달러와 한국 원화를<br>
+            간편하게 계산하세요.
+        </p>
+
+    </header>
+
+
+    <main
+            class="exchange-card"
+            id="exchangeCard"
+    >
+
+        <!-- FROM -->
+        <div class="currency-row">
+
+            <div class="currency-label">
+
+                <span
+                        class="flag"
+                        id="fromFlag"
+                >
+                    🇺🇸
+                </span>
+
+                <span id="fromName">
+                    미국 달러
+                </span>
+
+            </div>
+
+            <div class="input-wrap">
+
+                <input
+                        type="text"
+                        id="fromAmount"
+                        class="currency-input"
+                        inputmode="decimal"
+                        autocomplete="off"
+                        value="100"
+                        aria-label="변환할 금액"
+                >
+
+                <span
+                        class="currency-code"
+                        id="fromCode"
+                >
+                    USD
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- SWAP -->
+        <div class="swap-wrap">
+
+            <button
+                    type="button"
+                    class="swap-button"
+                    id="swapButton"
+                    aria-label="달러와 원화 위치 바꾸기"
+                    title="통화 바꾸기"
+            >
+                ⇅
+            </button>
+
+        </div>
+
+
+        <!-- TO -->
+        <div class="currency-row">
+
+            <div class="currency-label">
+
+                <span
+                        class="flag"
+                        id="toFlag"
+                >
+                    🇰🇷
+                </span>
+
+                <span id="toName">
+                    한국 원화
+                </span>
+
+            </div>
+
+            <div class="input-wrap">
+
+                <input
+                        type="text"
+                        id="toAmount"
+                        class="currency-input"
+                        inputmode="decimal"
+                        autocomplete="off"
+                        aria-label="변환된 금액"
+                >
+
+                <span
+                        class="currency-code"
+                        id="toCode"
+                >
+                    KRW
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- RATE -->
+        <div class="rate-box">
+
+            <div class="rate-title">
+                현재 기준 환율
+            </div>
+
+            <div
+                    class="rate-main"
+                    id="rateMain"
+            >
+                환율 정보를 불러오는 중입니다.
+            </div>
+
+            <div
+                    class="rate-sub"
+                    id="rateSub"
+            ></div>
+
+            <div
+                    class="rate-date"
+                    id="rateDate"
+            ></div>
+
+        </div>
+
+
+        <!-- QUICK -->
+        <div class="quick-title">
+            🇺🇸 달러 빠른 계산
+        </div>
+
+        <div class="quick-description">
+            금액을 누르면 원화로 바로 계산됩니다.
+        </div>
+
+        <div
+                class="quick-grid"
+                id="quickButtons"
+        >
+
+            <button
+                    type="button"
+                    class="quick-button"
+                    data-amount="1"
+            >
+                $1
+            </button>
+
+            <button
+                    type="button"
+                    class="quick-button"
+                    data-amount="5"
+            >
+                $5
+            </button>
+
+            <button
+                    type="button"
+                    class="quick-button"
+                    data-amount="10"
+            >
+                $10
+            </button>
+
+            <button
+                    type="button"
+                    class="quick-button"
+                    data-amount="20"
+            >
+                $20
+            </button>
+
+            <button
+                    type="button"
+                    class="quick-button"
+                    data-amount="50"
+            >
+                $50
+            </button>
+
+            <button
+                    type="button"
+                    class="quick-button"
+                    data-amount="100"
+            >
+                $100
+            </button>
+
+            <button
+                    type="button"
+                    class="quick-button"
+                    data-amount="500"
+            >
+                $500
+            </button>
+
+            <button
+                    type="button"
+                    class="quick-button"
+                    data-amount="1000"
+            >
+                $1,000
+            </button>
+
+        </div>
+
+    </main>
+
+
+    <div
+            class="error"
+            id="errorBox"
+            hidden
+    >
+        환율 정보를 불러올 수 없습니다.<br>
+        잠시 후 다시 시도해 주세요.
+    </div>
+
+
+    <footer class="notice">
+
+        실제 은행, 카드사, 환전소의 적용 환율에는<br>
+        수수료 및 환전 스프레드가 포함되어<br>
+        표시된 금액과 차이가 날 수 있습니다.
+
+        <div class="api-credit">
+
+            환율 데이터:
+
+            <a
+                    href="https://frankfurter.dev/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+            >
+                Frankfurter
+            </a>
+
+        </div>
+
+    </footer>
+
+</div>
+
+
+<script>
+    (function () {
+
+        "use strict";
+
+
+        /*
+         * Frankfurter API
+         *
+         * usdToKrw
+         * 1 USD = ? KRW
+         *
+         * krwToUsd
+         * 1 KRW = ? USD
+         */
+
+        var apiUrl =
+                "https://api.frankfurter.dev/v1/latest?base=USD&symbols=KRW";
+
+
+        var usdToKrw = 0;
+        var krwToUsd = 0;
+
+
+        /*
+         * 기본 방향
+         *
+         * USD → KRW
+         */
+
+        var direction = "USD_TO_KRW";
+
+
+        var fromAmount =
+                document.getElementById("fromAmount");
+
+        var toAmount =
+                document.getElementById("toAmount");
+
+        var fromFlag =
+                document.getElementById("fromFlag");
+
+        var toFlag =
+                document.getElementById("toFlag");
+
+        var fromName =
+                document.getElementById("fromName");
+
+        var toName =
+                document.getElementById("toName");
+
+        var fromCode =
+                document.getElementById("fromCode");
+
+        var toCode =
+                document.getElementById("toCode");
+
+        var swapButton =
+                document.getElementById("swapButton");
+
+        var quickButtons =
+                document.getElementById("quickButtons");
+
+        var rateMain =
+                document.getElementById("rateMain");
+
+        var rateSub =
+                document.getElementById("rateSub");
+
+        var rateDate =
+                document.getElementById("rateDate");
+
+        var exchangeCard =
+                document.getElementById("exchangeCard");
+
+        var errorBox =
+                document.getElementById("errorBox");
+
+
+        /**
+         * 입력 문자열 → 숫자
+         */
+
+        function parseNumber(value) {
+
+            value = String(value);
+
+            value = value.replace(/,/g, "");
+
+            value = value.replace(/[^\d.]/g, "");
+
+
+            var parts =
+                    value.split(".");
+
+
+            if (parts.length > 2) {
+
+                value =
+                    parts.shift() +
+                    "." +
+                    parts.join("");
+
+            }
+
+
+            return parseFloat(value) || 0;
+        }
+
+
+        /**
+         * 숫자 표시
+         */
+
+        function formatNumber(number, decimals) {
+
+            if (!isFinite(number)) {
+                return "";
+            }
+
+
+            return Number(number).toLocaleString(
+                "ko-KR",
+                {
+                    minimumFractionDigits: 0,
+                    maximumFractionDigits: decimals
+                }
+            );
+        }
+
+
+        /**
+         * 환율 계산
+         */
+
+        function convert() {
+
+            var amount =
+                    parseNumber(fromAmount.value);
+
+            var result = 0;
+
+
+            if (fromAmount.value === "") {
+
+                toAmount.value = "";
+
+                return;
+
+            }
+
+
+            if (
+                usdToKrw <= 0 ||
+                krwToUsd <= 0
+            ) {
+
+                toAmount.value = "";
+
+                return;
+
+            }
+
+
+            if (direction === "USD_TO_KRW") {
+
+                result =
+                    amount * usdToKrw;
+
+
+                toAmount.value =
+                    formatNumber(
+                        result,
+                        0
+                    );
+
+            } else {
+
+                result =
+                    amount * krwToUsd;
+
+
+                toAmount.value =
+                    formatNumber(
+                        result,
+                        2
+                    );
+
+            }
+
+        }
+
+
+        /**
+         * 통화 방향 UI
+         */
+
+        function updateDirection() {
+
+            if (direction === "USD_TO_KRW") {
+
+                fromFlag.textContent =
+                    "🇺🇸";
+
+                fromName.textContent =
+                    "미국 달러";
+
+                fromCode.textContent =
+                    "USD";
+
+
+                toFlag.textContent =
+                    "🇰🇷";
+
+                toName.textContent =
+                    "한국 원화";
+
+                toCode.textContent =
+                    "KRW";
+
+            } else {
+
+                fromFlag.textContent =
+                    "🇰🇷";
+
+                fromName.textContent =
+                    "한국 원화";
+
+                fromCode.textContent =
+                    "KRW";
+
+
+                toFlag.textContent =
+                    "🇺🇸";
+
+                toName.textContent =
+                    "미국 달러";
+
+                toCode.textContent =
+                    "USD";
+
+            }
+
+
+            convert();
+        }
+
+
+        /**
+         * 직접 입력
+         */
+
+        fromAmount.addEventListener(
+            "input",
+            function () {
+
+                if (this.value === "") {
+
+                    toAmount.value = "";
+
+                    return;
+
+                }
+
+
+                convert();
+
+            }
+        );
+
+
+        /**
+         * 입력 완료 후 숫자 포맷
+         */
+
+        fromAmount.addEventListener(
+            "blur",
+            function () {
+
+                if (this.value === "") {
+                    return;
+                }
+
+
+                var value =
+                        parseNumber(this.value);
+
+
+                if (direction === "USD_TO_KRW") {
+
+                    this.value =
+                        formatNumber(
+                            value,
+                            2
+                        );
+
+                } else {
+
+                    this.value =
+                        formatNumber(
+                            value,
+                            0
+                        );
+
+                }
+
+
+                convert();
+
+            }
+        );
+
+
+        /**
+         * USD ↔ KRW 전환
+         */
+
+        swapButton.addEventListener(
+            "click",
+            function () {
+
+                var currentResult =
+                        parseNumber(
+                            toAmount.value
+                        );
+
+
+                if (direction === "USD_TO_KRW") {
+
+                    direction =
+                        "KRW_TO_USD";
+
+                } else {
+
+                    direction =
+                        "USD_TO_KRW";
+
+                }
+
+
+                if (direction === "USD_TO_KRW") {
+
+                    fromAmount.value =
+                        formatNumber(
+                            currentResult,
+                            2
+                        );
+
+                } else {
+
+                    fromAmount.value =
+                        formatNumber(
+                            currentResult,
+                            0
+                        );
+
+                }
+
+
+                updateDirection();
+
+                fromAmount.focus();
+
+            }
+        );
+
+
+        /**
+         * 달러 빠른 계산
+         *
+         * 버튼 클릭 시 항상
+         * USD → KRW 방향
+         */
+
+        quickButtons.addEventListener(
+            "click",
+            function (event) {
+
+                var target =
+                        event.target;
+
+
+                if (
+                    !target.classList.contains(
+                        "quick-button"
+                    )
+                ) {
+                    return;
+                }
+
+
+                var amount =
+                        target.getAttribute(
+                            "data-amount"
+                        );
+
+
+                if (!amount) {
+                    return;
+                }
+
+
+                amount =
+                    parseFloat(amount);
+
+
+                direction =
+                    "USD_TO_KRW";
+
+
+                fromAmount.value =
+                    formatNumber(
+                        amount,
+                        0
+                    );
+
+
+                updateDirection();
+
+            }
+        );
+
+
+        /**
+         * 환율 API 호출
+         */
+
+        fetch(apiUrl)
+
+        .then(function (response) {
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "환율 API 오류"
+                );
+
+            }
+
+
+            return response.json();
+
+        })
+
+        .then(function (data) {
+
+            if (
+                !data ||
+                !data.rates ||
+                !data.rates.KRW
+            ) {
+
+                throw new Error(
+                    "환율 정보 없음"
+                );
+
+            }
+
+
+            usdToKrw =
+                parseFloat(
+                    data.rates.KRW
+                );
+
+
+            krwToUsd =
+                1 / usdToKrw;
+
+
+            /*
+             * 1 USD = ? KRW
+             */
+
+            rateMain.textContent =
+                "1 USD ≈ " +
+                formatNumber(
+                    usdToKrw,
+                    2
+                ) +
+                " KRW";
+
+
+            /*
+             * 1,000 KRW = ? USD
+             */
+
+            rateSub.textContent =
+                "1,000 KRW ≈ " +
+                formatNumber(
+                    krwToUsd * 1000,
+                    2
+                ) +
+                " USD";
+
+
+            if (data.date) {
+
+                rateDate.textContent =
+                    "환율 기준일: " +
+                    data.date;
+
+            }
+
+
+            updateDirection();
+
+        })
+
+        .catch(function () {
+
+            exchangeCard.hidden = true;
+
+            errorBox.hidden = false;
+
+        });
+
+
+        /**
+         * 최초 방향 설정
+         */
+
+        updateDirection();
+
+    })();
+</script>
+
+</body>
+</html>
